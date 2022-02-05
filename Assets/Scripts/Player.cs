@@ -4,16 +4,30 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    
+    [Header("head")]
+    public Transform head;
+    public float mouseSensitivity = 1.2f;
+    public bool invertY = false;
+
+    [Header("launching")]
     public float throwAngle = 30.0f;
     public Transform targetHitPoint;
     public Transform launchPivot;
     public LineRenderer projectilePath;
 
-    public Painting painting;
     public bool allowInput;
+    public Painting painting;
 
     public Bird birdPrefab;
+
+    [Header("movement")]
+    public bool run;
+    public float speed = 5.0f;
+    public float headHeight = 1.0f;
+    public LayerMask terrainLayer;
+
+
+    float xAxisClamp;
 
     private void Awake() {
         if(painting == null)
@@ -21,9 +35,15 @@ public class Player : MonoBehaviour
         
         if(projectilePath == null)
             projectilePath = GetComponentInChildren<LineRenderer>();
+
+        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
     }
 
     private void Update() {
+
+        RotateCamera();
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if(painting.PaintPlane.Raycast(ray, out float enter))
         {
@@ -42,6 +62,53 @@ public class Player : MonoBehaviour
                 body.AddTorque(Random.onUnitSphere * 200.0f);
             }
         }
+
+        if(run)
+        {
+            Vector3 next = transform.position + Vector3.forward * speed * Time.deltaTime;
+            next.y = headHeight;
+
+            if(Physics.Raycast(transform.position + Vector3.up * 5.0f, Vector3.down, out RaycastHit hit, 10.0f, terrainLayer.value))
+                next.y += hit.point.y;
+            
+            transform.position = next;
+        }
+    }
+
+    private void RotateCamera()
+    {
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
+
+        float rotAmountX = mouseX * mouseSensitivity;
+        float rotAmountY = mouseY * mouseSensitivity;
+
+        xAxisClamp -= rotAmountY;
+
+        //Vector3 targetRotCamera = transform.localRotation.eulerAngles;
+        Vector3 targetRotBody = head.localRotation.eulerAngles;
+
+        if (invertY)
+            rotAmountY *= -1;
+
+        targetRotBody.x -= rotAmountY;
+        targetRotBody.z = 0;
+
+        targetRotBody.y += rotAmountX;
+
+        if (xAxisClamp > 90)
+        {
+            xAxisClamp = targetRotBody.x = 90;
+
+        }
+        else if (xAxisClamp < -90)
+        {
+            xAxisClamp = -90f;
+            targetRotBody.x = 270f;
+        }
+
+        //transform.localRotation = Quaternion.Euler(targetRotBody);
+        head.rotation = Quaternion.Euler(targetRotBody);
     }
 
     Vector3 LaunchDirection ()

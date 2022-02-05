@@ -56,6 +56,7 @@ public class Painting : MonoBehaviour
         resultTexture = new RenderTexture(width, height, 0);
         resultTexture.filterMode = FilterMode.Bilinear;
         resultTexture.enableRandomWrite = true;
+        resultTexture.antiAliasing = 2;
         resultTexture.Create();
  
         paintCamera.depthTextureMode = paintCamera.depthTextureMode | DepthTextureMode.Depth;
@@ -87,6 +88,7 @@ public class Painting : MonoBehaviour
             paintCamera.cullingMask = layer.value;
         }
     }
+
 
     public void Shake ()
     {
