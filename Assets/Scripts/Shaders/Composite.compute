@@ -1,0 +1,25 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+#include "UnityCG.cginc"
+
+uniform Texture2D<float4> _Brush;
+uniform RWTexture2D<float4> _Result;
+uniform float4 _Color;
+uniform int2 _Size;
+
+float4 blend (float4 c0, float4 c1, float a)
+{
+    return lerp(c0, c1, a);
+
+    // one minus source alpha
+    //return float4(c0.rgb * (1.0 - c0.a) + c1.rgb * c1.a, 1.0);
+}
+
+[numthreads(32,32,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    if(id.x > _Size.x || id.y > _Size.y)
+        return;
+    
+    _Result[id.xy] = lerp(_Result[id.xy], _Brush[id.xy] * _Brush[id.xy].a, _Brush[id.xy].a); //blend(_Result[id.xy], _Color, 1.0f - _Brush[id.xy].a);
+}

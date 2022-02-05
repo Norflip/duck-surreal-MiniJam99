@@ -1,0 +1,58 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+#include "noiseSimplex.cginc"
+
+uniform Texture2D<float4> _DepthTexture;
+uniform RWTexture2D<float4> _Result;
+uniform float4 _ZBufferParams;
+uniform float4 _Color;
+uniform Texture2D<float4> _DitheringTexture;
+uniform int2 _Size;
+
+// Z buffer to linear 0..1 depth
+inline float Linear01Depth( float z ) {
+    return 1.0 / (_ZBufferParams.x * z + _ZBufferParams.y);
+}
+
+#ifndef PI
+#define PI 3.14159265359
+#define TAU (PI*2.0)
+#endif
+
+
+#define ALPHA_STEP 1.0
+#define BLUR_RADIUS 8
+#define MAX_BLURS (((BLUR_RADIUS + 1) * 2) * ((BLUR_RADIUS + 1) * 2))
+
+
+inline float SampleBlured (int2 uv) {
+
+    float v = 0.0f;
+    [unroll]
+    for(int y = -BLUR_RADIUS; y <= BLUR_RADIUS; y++)
+    {
+        [unroll]
+        for(int x = -BLUR_RADIUS; x <= BLUR_RADIUS; x++)
+        {
+            v += _DepthTexture[uv + int2(x,y)].r;
+        }   
+    }
+
+    return v / float(MAX_BLURS);
+}
+
+[numthreads(32,32,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    if(id.x > _Size.x || id.y > _Size.y)
+        return;
+
+    float xo = snoise(id.xy / 0.05f) * TAU;
+    int2 offset = int2(cos(xo) * BLUR_RADIUS, sin(xo) * BLUR_RADIUS);
+
+    float depth = Linear01Depth(SampleBlured(id.xy + offset));
+    
+    float a = round((1.0 - depth) / ALPHA_STEP) * ALPHA_STEP;
+
+    _Result[id.xy] = float4(_Color.rgb, a); //float4(depth,depth,depth, 1.0);// (_DepthTexture[id.xy]);//float4(depth, depth, depth, 1.0);//float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+}
