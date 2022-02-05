@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bird : MonoBehaviour
+public class Bird : MonoBehaviour, IPoolable<Bird>
 {
     [NaughtyAttributes.Layer]
     public int paintingLayer;
@@ -17,26 +17,53 @@ public class Bird : MonoBehaviour
     
     public int hits = 0;
 
+    float gottenTime;
+
     Rigidbody body;
+    Renderer rend;
+    Pool<Bird> pool;
 
     private void Awake() {
         body = GetComponent<Rigidbody>();
+        rend = GetComponent<Renderer>();
+
+        //rend.
+    }
+
+    private void Update() {
+        if(gottenTime + 2.0f < Time.time || !rend.isVisible)
+        {
+            pool.Return(this);
+        }    
     }
 
     private void OnCollisionEnter(Collision other) {
         if(other.gameObject.layer == paintingLayer)
         {
             Painting painting = other.gameObject.GetComponent<Painting>();
+            painting.TriggerBrush();
             painting.Shake();
-            body.AddForce(painting.PaintPlane.normal * collisionNormalForce);
 
-            //painting.TriggerBrush();
+            body.AddForce(painting.GetPlane().normal * collisionNormalForce);
 
-            //gameObject.layer = layerAfterPainted;
-        
             StartCoroutine(SetLayer());
             hits++;
         }
+    }
+
+    public void Added(Pool<Bird> pool) {
+        this.pool = pool;
+    }
+
+    public void Gotten() {
+        hits = 0;
+        gottenTime = Time.time;
+        body.velocity = body.angularVelocity = Vector3.zero;
+    }
+
+    public void Returned() 
+    {
+
     }
 
     IEnumerator SetLayer ()

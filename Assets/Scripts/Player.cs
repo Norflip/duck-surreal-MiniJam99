@@ -27,7 +27,9 @@ public class Player : MonoBehaviour
     public LayerMask terrainLayer;
 
 
-    float xAxisClamp;
+    Pool<Bird> birdPool;
+    [SerializeField, NaughtyAttributes.ReadOnly]
+    float xAxisClamp, yAxisClamp;
 
     private void Awake() {
         if(painting == null)
@@ -36,6 +38,7 @@ public class Player : MonoBehaviour
         if(projectilePath == null)
             projectilePath = GetComponentInChildren<LineRenderer>();
 
+        birdPool = new Pool<Bird>(birdPrefab, 12);
         Cursor.lockState = CursorLockMode.Locked;
         //Cursor.visible = false;
     }
@@ -45,7 +48,7 @@ public class Player : MonoBehaviour
         RotateCamera();
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if(painting.PaintPlane.Raycast(ray, out float enter))
+        if(painting.GetPlane().Raycast(ray, out float enter))
         {
             targetHitPoint.position = ray.GetPoint(enter);
 
@@ -55,11 +58,21 @@ public class Player : MonoBehaviour
             if(Input.GetMouseButtonDown(0))
             {
                 Vector3 launch = LaunchDirection() * LaunchForce();
-                Bird bird = Instantiate(birdPrefab);
+
+                if(float.IsNaN(launch.x) || float.IsNaN(launch.y) || float.IsNaN(launch.z))
+                {
+                    Debug.Log(LaunchDirection());
+                    Debug.Log(LaunchForce());
+                    Debug.Assert(false);
+                }
+
+                Bird bird = birdPool.Get();
                 Rigidbody body = bird.GetComponent<Rigidbody>();
                 body.position = body.transform.position = launchPivot.position;
                 body.AddForce(launch, ForceMode.VelocityChange);
                 body.AddTorque(Random.onUnitSphere * 200.0f);
+
+                body.velocity += Vector3.forward * speed;
             }
         }
 
@@ -84,6 +97,7 @@ public class Player : MonoBehaviour
         float rotAmountY = mouseY * mouseSensitivity;
 
         xAxisClamp -= rotAmountY;
+        yAxisClamp -= rotAmountX;
 
         //Vector3 targetRotCamera = transform.localRotation.eulerAngles;
         Vector3 targetRotBody = head.localRotation.eulerAngles;

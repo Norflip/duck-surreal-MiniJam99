@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: GrassGeometry 5
   m_Shader: {fileID: 4800000, guid: 56c62c0a218f41c40acce0a146eff949, type: 3}
-  m_ShaderKeywords: IS_LIT
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -41,7 +41,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GradientMap:
-        m_Texture: {fileID: 2800000, guid: 65950cd8891d3e74fa54de617f48d2b8, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6b3afefb5c591e546995196f656ad172, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -88,11 +88,11 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _GrassBlades: 15
-    - _GrassHeight: 0.5
+    - _GrassBlades: 1
+    - _GrassHeight: 0.2
     - _GrassTrampleOffsetAmount: 0
     - _GrassWidth: 0.003
-    - _IsLit: 1
+    - _IsLit: 0
     - _MaxCameraDistance: 80.96
     - _Metallic: 0
     - _MinimunGrassBlades: 0
@@ -107,7 +107,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _TessellationUniform: 3
+    - _TessellationUniform: 1
     - _TranslucentGain: 0.5
     - _UVSec: 0
     - _WindSpeed: 0.01

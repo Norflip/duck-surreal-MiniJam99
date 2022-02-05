@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class Painting : MonoBehaviour
+public class Painting : MonoBehaviour, ITarget
 {
     const int RT_TEXTURE_DEPTH = 16;
     const int DISPATCH_GROUP_SZ = 32;
@@ -21,7 +21,6 @@ public class Painting : MonoBehaviour
     public float camExtraThickness;
 
     public float Aspect => (float)resolution.x / (float)resolution.y;
-    public Plane PaintPlane => new Plane(transform.forward * -1, transform.position);
 
     public Material material;
     public Texture2D ditheringTexture;
@@ -89,14 +88,13 @@ public class Painting : MonoBehaviour
         }
     }
 
-
     public void Shake ()
     {
         transform.DOComplete();
         transform.DOShakePosition(shakeDuration, shakeStrength, 10, 90, false, true);
     }
 
-    private void Update() {
+    private void LateUpdate() {
         TriggerBrush();
     }
 
@@ -134,5 +132,15 @@ public class Painting : MonoBehaviour
 
         material.SetTexture("_MainTex", resultTexture);
         //RenderTexture.active = currentRT;
+    }
+
+    public Plane GetPlane()
+    {
+        return new Plane(transform.forward * -1, transform.position);
+    }
+
+    public bool Raycast(Ray ray, out Vector3 normal)
+    {
+        throw new System.NotImplementedException();
     }
 }

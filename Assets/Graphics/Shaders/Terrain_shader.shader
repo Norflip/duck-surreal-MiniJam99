@@ -2,6 +2,7 @@ Shader "Unlit/Terrain_shader"
 {
     Properties
     {
+        _Color("Color", Color) = (1,1,1,1)
             [Header(Dithering)]
         _DitherPattern ("Dithering Pattern", 2D) = "white" {}
         _MinDistance ("Minimum Fade Distance", Float) = 0
@@ -51,6 +52,8 @@ Shader "Unlit/Terrain_shader"
                 float4 color : COLOR0;
                 float4 screenPos : TEXCOORD2;
             };
+
+            float4 _Color;
 
             sampler2D _DitherPattern;
             float4 _DitherPattern_TexelSize;
@@ -103,10 +106,12 @@ Shader "Unlit/Terrain_shader"
                 float dst = -sdcircle(i.worldposXZ, float2(0, g_PlayerWorldPositionZ));
                 dst = smoothstep(-g_PlayerFade, g_PlayerFade, dst);
 
+                float d = dot(i.localNormal, _WorldSpaceLightPos0);
+
                 
                 //clip(dst - 0.5f);
 
-                return float4(i.color.rgb, dst);
+                return float4(_Color.rgb * d, dst);
 
 
 

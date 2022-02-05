@@ -213,4 +213,5 @@ MonoBehaviour:
   layerAfterPainted: 6
   collisionParticles: {fileID: 0}
   collisionClip: {fileID: 0}
+  collisionNormalForce: 0
   hits: 0
