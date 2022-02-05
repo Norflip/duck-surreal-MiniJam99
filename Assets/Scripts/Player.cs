@@ -11,14 +11,18 @@ public class Player : MonoBehaviour
 
     [Header("launching")]
     public float throwAngle = 30.0f;
-    public Transform targetHitPoint;
     public Transform launchPivot;
     public LineRenderer projectilePath;
 
     public bool allowInput;
     public Painting painting;
-
     public Bird birdPrefab;
+
+    [Header("targeting")]
+    public Transform targetHitPoint;
+    public LayerMask hitLayerMask;
+    public float radius = 0.8f;
+    public float notHitForwardDistance = 5.0f;
 
     [Header("movement")]
     public bool run;
@@ -26,6 +30,8 @@ public class Player : MonoBehaviour
     public float headHeight = 1.0f;
     public LayerMask terrainLayer;
 
+    [Header("main cam")]
+    public Camera mainCamera;
 
     Pool<Bird> birdPool;
     [SerializeField, NaughtyAttributes.ReadOnly]
@@ -46,34 +52,48 @@ public class Player : MonoBehaviour
     private void Update() {
 
         RotateCamera();
+        
+        float enter;
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if(painting.GetPlane().Raycast(ray, out float enter))
+        RaycastHit hit;
+        Ray ray = new Ray(head.position, head.forward);
+        
+        if(Physics.SphereCast(ray, radius, out hit, 100.0f, hitLayerMask.value))
         {
-            targetHitPoint.position = ray.GetPoint(enter);
-
-            //if(Input.GetMouseButton(0))
-            //    CalculateTrajectory ();
-
-            if(Input.GetMouseButtonDown(0))
+            ITarget t = hit.transform.GetComponent<ITarget>();
+            if(t != null)
             {
-                Vector3 launch = LaunchDirection() * LaunchForce();
-
-                if(float.IsNaN(launch.x) || float.IsNaN(launch.y) || float.IsNaN(launch.z))
+                Plane plane = t.GetPlane();
+                if(plane.Raycast(ray, out enter))
                 {
-                    Debug.Log(LaunchDirection());
-                    Debug.Log(LaunchForce());
-                    Debug.Assert(false);
+                    targetHitPoint.position = ray.GetPoint(enter) + plane.normal * 0.01f;
+                    targetHitPoint.rotation = LookRot(-plane.normal);
                 }
-
-                Bird bird = birdPool.Get();
-                Rigidbody body = bird.GetComponent<Rigidbody>();
-                body.position = body.transform.position = launchPivot.position;
-                body.AddForce(launch, ForceMode.VelocityChange);
-                body.AddTorque(Random.onUnitSphere * 200.0f);
-
-                body.velocity += Vector3.forward * speed;
             }
+        }
+        else
+        {
+            targetHitPoint.position = head.position + head.forward * notHitForwardDistance;
+            targetHitPoint.rotation = LookRot(head.forward);
+        }
+
+        if(Input.GetMouseButtonDown(0))
+        {
+            Vector3 launch = LaunchDirection() * LaunchForce();
+            if(float.IsNaN(launch.x) || float.IsNaN(launch.y) || float.IsNaN(launch.z))
+            {
+                Debug.Log(LaunchDirection());
+                Debug.Log(LaunchForce());
+                Debug.Assert(false);
+            }
+
+            Bird bird = birdPool.Get();
+            Rigidbody body = bird.GetComponent<Rigidbody>();
+            body.position = body.transform.position = launchPivot.position;
+            body.AddForce(launch, ForceMode.VelocityChange);
+            body.AddTorque(Random.onUnitSphere * 200.0f);
+
+            body.velocity += Vector3.forward * speed;
         }
 
         if(run)
@@ -81,11 +101,17 @@ public class Player : MonoBehaviour
             Vector3 next = transform.position + Vector3.forward * speed * Time.deltaTime;
             next.y = headHeight;
 
-            if(Physics.Raycast(transform.position + Vector3.up * 5.0f, Vector3.down, out RaycastHit hit, 10.0f, terrainLayer.value))
+            if(Physics.Raycast(transform.position + Vector3.up * 5.0f, Vector3.down, out hit, 10.0f, terrainLayer.value))
                 next.y += hit.point.y;
             
             transform.position = next;
         }
+    }
+
+    Quaternion LookRot (Vector3 dir)
+    {
+        Quaternion rot = Quaternion.LookRotation(dir, (Mathf.Abs(Vector3.Dot(dir, Vector3.up)) > 1.0f - Mathf.Epsilon) ? Vector3.right : Vector3.up);
+        return rot;
     }
 
     private void RotateCamera()

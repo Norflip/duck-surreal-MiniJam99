@@ -6,7 +6,13 @@ using UnityEngine;
 public struct Sound
 {
     public AudioClip clip;
+    
     public float pitch;
+
+    [Space(10.0f)]
+    public bool randomizePitch;
+    public float minPitch;
+    public float maxPitch;
 }
 
 public class AudioRunner : MonoBehaviour
@@ -41,7 +47,7 @@ public class AudioRunner : MonoBehaviour
         src.spatialBlend = 0.0f;
         src.clip = null;
         src.clip = sound.clip;
-        src.pitch = sound.pitch;
+        src.pitch = sound.randomizePitch? Random.Range(sound.minPitch, sound.maxPitch) : sound.pitch;
 
         src.Stop();
         src.Play();
@@ -56,8 +62,8 @@ public class AudioRunner : MonoBehaviour
         src.spatialBlend = 1.0f;
         src.clip = null;
         src.clip = sound.clip;
-        src.pitch = sound.pitch;
-
+        src.pitch = sound.randomizePitch? Random.Range(sound.minPitch, sound.maxPitch) : sound.pitch;
+        
         src.transform.position = position;
         src.Stop();
         src.Play();

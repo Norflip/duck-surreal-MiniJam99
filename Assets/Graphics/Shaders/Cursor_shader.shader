@@ -58,7 +58,7 @@ Shader "Unlit/Cursor_shader"
 
                 clip(-dst);
 
-                return float4(dst, dst, dst, 1.0);
+                return float4(_Color.rgb, 1.0);
             }
             ENDCG
         }

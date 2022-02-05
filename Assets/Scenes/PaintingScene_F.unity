@@ -197,12 +197,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 268600430}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.12, y: 1.263, z: -0.027}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.748, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_Father: {fileID: 853020666}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &412097158
 GameObject:
@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0, g: 0.5299125, b: 1, a: 1}
-  resolution: {x: 433, y: 640}
+  resolution: {x: 500, y: 778}
   scale: 2.74
   layer:
     serializedVersion: 2
@@ -325,7 +325,7 @@ Transform:
   m_GameObject: {fileID: 412097158}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 1.37, z: 0}
-  m_LocalScale: {x: 1.8537812, y: 2.74, z: 1}
+  m_LocalScale: {x: 1.7609254, y: 2.74, z: 1}
   m_Children:
   - {fileID: 1856915927}
   m_Father: {fileID: 1268565265}
@@ -468,7 +468,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 853020663}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -518,9 +518,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 853020663}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.87, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
-  m_Children: []
+  m_LocalPosition: {x: 0, y: 1.87, z: -0.531}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 268600434}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1011,18 +1012,24 @@ MonoBehaviour:
   mouseSensitivity: 1.2
   invertY: 0
   throwAngle: 30
-  targetHitPoint: {fileID: 853020666}
   launchPivot: {fileID: 489717901}
   projectilePath: {fileID: 0}
   allowInput: 1
   painting: {fileID: 412097159}
   birdPrefab: {fileID: 7574333149407203566, guid: 6cebe2ac36260d04c8c6e7d80652f308, type: 3}
+  targetHitPoint: {fileID: 853020666}
+  hitLayerMask:
+    serializedVersion: 2
+    m_Bits: 768
+  radius: 1
+  notHitForwardDistance: 5
   run: 0
   speed: 3
   headHeight: 1.75
   terrainLayer:
     serializedVersion: 2
     m_Bits: 256
+  mainCamera: {fileID: 2097211256}
   xAxisClamp: 0
   yAxisClamp: 0
 --- !u!114 &1640440129
