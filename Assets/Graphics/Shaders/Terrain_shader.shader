@@ -15,9 +15,10 @@ Shader "Unlit/Terrain_shader"
     }
     SubShader
     {   
-        Tags {"RenderType" = "Opaque" }
-		ZWrite On
-        cull Off
+        Tags {"RenderType" = "Transparent" "Queue" = "Transparent" }
+		Blend SrcAlpha OneMinusSrcAlpha
+        ZWrite On
+        //cull Off
 		LOD 100
 
         Pass
@@ -42,6 +43,7 @@ Shader "Unlit/Terrain_shader"
             struct v2f
             {
                 float4 vertex : SV_POSITION;
+                float2 worldposXZ : TEXCOORD3;
                 float3 localCoord : TEXCOORD1;
                 float3 localNormal : NORMAL;
 
@@ -61,23 +63,53 @@ Shader "Unlit/Terrain_shader"
             //remapping of distance
             float _MinDistance;
             float _MaxDistance;
+
+            float g_PlayerWorldPositionZ;
+            float g_PlayerFade;
+            float g_PlayerRadius;
+
+            float sdcircle (float2 samplePoint, float2 centre)
+            {
+                return length(samplePoint - centre) - g_PlayerRadius;
+            }
+
             
 
             v2f vert (appdata v)
             {
+                float4 vert = v.vertex;
+                float3 worldPos = mul(unity_ObjectToWorld, float4(vert.xyz, 1.0));
+
+                float dst = sdcircle(worldPos.xz, float2(0, g_PlayerWorldPositionZ));
+                dst = smoothstep(-g_PlayerFade, g_PlayerFade, dst);
+
+                //vert.y = lerp(vert.y, 0.0f, saturate(dst));
+                
                 v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.localCoord = v.vertex;
+                o.vertex = UnityObjectToClipPos(vert);
+                o.worldposXZ = worldPos.xz;
+                o.localCoord = vert;
                 o.localNormal = v.normal;
                 o.uv = v.uv;
                 
                 o.screenPos = ComputeScreenPos(o.vertex);
-                o.color = float4(ShadeVertexLights(v.vertex, v.normal), 1.0);
+                o.color = float4(ShadeVertexLights(vert, v.normal), 1.0);
                 return o;
             }
 
+
             fixed4 frag (v2f i) : SV_Target
             {
+                float dst = -sdcircle(i.worldposXZ, float2(0, g_PlayerWorldPositionZ));
+                dst = smoothstep(-g_PlayerFade, g_PlayerFade, dst);
+
+                
+                //clip(dst - 0.5f);
+
+                return float4(i.color.rgb, dst);
+
+
+
                 //value from the dither pattern
                 float2 screenPos = i.screenPos.xy / i.screenPos.w;
                 float2 ditherCoordinate = screenPos * _ScreenParams.xy * _DitherPattern_TexelSize.xy;
@@ -90,7 +122,10 @@ Shader "Unlit/Terrain_shader"
                 
                 //discard pixels accordingly
                 clip(relDistance - ditherValue);
+
+                return i.color;
                 
+                /*
                 // Triplanar mapping
                 float2 tx = i.localCoord.zy / _MapScale;
                 float2 ty = i.localCoord.xz / _MapScale;
@@ -110,6 +145,7 @@ Shader "Unlit/Terrain_shader"
 
                 // Finally, blend together all three samples based on the blend mask.
                 return float4(xDiff * blendWeights.x + yDiff * blendWeights.y + zDiff * blendWeights.z, 1.0) * i.color;
+                */
             }
             ENDCG
         }

@@ -27,22 +27,26 @@ public struct MeshHeightJob : IJobParallelFor
 public class Chunk : MonoBehaviour
 {
     public const int Size = 32;
-    NativeArray<Vector3> vertices;
 
+    public int Index => index;
     [SerializeField] int index;
     Mesh mesh;
-    
+    MeshCollider coll;
+
     private void OnValidate() {
         transform.position = new Vector3(0.0f, 0.0f, index * Size);
     }
 
-    void Awake () {
-        mesh = GetComponent<MeshFilter>().mesh; 
-        vertices = new NativeArray<Vector3>(mesh.vertices, Allocator.Persistent); // 2
-    }
-
     public void Generate (int index, float noiseScale, float height)
     {
+        if(mesh == null)
+        {
+            mesh = GetComponent<MeshFilter>().mesh; 
+            coll = GetComponent<MeshCollider>();
+        }
+    
+        NativeArray<Vector3> vertices = new NativeArray<Vector3>(mesh.vertices, Allocator.TempJob); // 2
+
         this.index = index;
         transform.position = new Vector3(0.0f, 0.0f, index * Size);
 
@@ -56,11 +60,14 @@ public class Chunk : MonoBehaviour
         mesh.SetVertices(job.vertices);
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
-    }
-
-    private void OnDestroy()
-    {
+        
         vertices.Dispose();
+
+        if(coll != null)
+        {
+            coll.sharedMesh = null;
+            coll.sharedMesh = mesh;
+        }
     }
 
     private void OnDrawGizmos() {
