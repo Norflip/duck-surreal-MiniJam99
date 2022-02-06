@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
+using UnityEngine.UI;
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 public class OpenFileName
-{
+{   
+
+
     public int structSize = 0;
     public IntPtr dlgOwner = IntPtr.Zero;
     public IntPtr instance = IntPtr.Zero;
@@ -48,9 +51,15 @@ public class Level : MonoBehaviour
     public static extern bool GetSaveFileName ([In, Out] OpenFileName ofn);
 
 
+    public Image timerBar;
+    public float maxTime = 5f;
+    float timeLeft;
+    public GameObject[] stuffToDeActivate;
+    public GameObject endScreen;
+
     void Start () {
         if(startOnStart)
-            StartLevel();
+            StartLevel();        
     }
 
     public void StartLevel ()
@@ -73,6 +82,13 @@ public class Level : MonoBehaviour
         painting.Initialize(xres, yres);
         player.run = true;
         miniducks.run = true;
+
+
+        for (int i = 0; i < stuffToDeActivate.Length; i++)
+            stuffToDeActivate[i].SetActive(true);
+        //timerBar = GetComponent<Image>();
+        timeLeft = maxTime;
+        endScreen.SetActive(false);
     }
 
     void Update ()
@@ -90,6 +106,21 @@ public class Level : MonoBehaviour
         {
             //ShowFiledialogToSaveImage();
         }
+
+
+        if (timeLeft > 0)
+        {
+            timeLeft -= Time.deltaTime;
+            timerBar.fillAmount = timeLeft / maxTime;
+        }
+        else
+        {
+            for (int i = 0; i < stuffToDeActivate.Length; i++)
+                stuffToDeActivate[i].SetActive(false);
+            Time.timeScale = 0;
+            endScreen.SetActive(true);
+        }
+
     }
 
     public void EndLevel ()
