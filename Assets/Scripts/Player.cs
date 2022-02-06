@@ -72,7 +72,7 @@ public class Player : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         //Cursor.visible = false;
         
-        currentScaleStep = 4;
+        currentScaleStep = 2;
 
         lastThrowTime = Time.time;
         CreateBirdInHand();

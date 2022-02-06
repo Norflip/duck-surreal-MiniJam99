@@ -110,7 +110,19 @@ MonoBehaviour:
   collisionParticles: {fileID: 0}
   collisionSound:
     sounds:
-    - clip: {fileID: 8300000, guid: fd5fb178e0fb9354b927bf4a6fc4172f, type: 3}
+    - clip: {fileID: 8300000, guid: 47a3f889da0afcd4783a3799846b140f, type: 3}
+      randomizePitch: 0
+      minPitch: 0
+      maxPitch: 0
+      pitch: 1
+      volume: 0.075
+    - clip: {fileID: 8300000, guid: 311c1eab69777304b99119369001a494, type: 3}
+      randomizePitch: 0
+      minPitch: 0
+      maxPitch: 0
+      pitch: 1
+      volume: 0.075
+    - clip: {fileID: 8300000, guid: a37c260e398faa34ba1a091dc398bb5c, type: 3}
       randomizePitch: 0
       minPitch: 0
       maxPitch: 0
