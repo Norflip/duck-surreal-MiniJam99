@@ -52,10 +52,15 @@ public class ColorSelect : MonoBehaviour
                 s = i;
         }
 
-        s %= tiles.Length;
+        s =ClampIndex(s,tiles.Length);
         if(s != selected)
         {
             Select(s);
         }
+    }
+
+    public static int ClampIndex(int index, int length)
+    {
+        return ((index % length) + length) % length;
     }
 }
