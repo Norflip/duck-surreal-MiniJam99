@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2153f5d53d7c0974da93a6418dadb169, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  headHeight: 0.25
+  headHeight: 0.5
   terrainLayer:
     serializedVersion: 2
     m_Bits: 256

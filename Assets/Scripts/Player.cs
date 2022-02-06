@@ -88,6 +88,11 @@ public class Player : MonoBehaviour
             }
 
             Bird bird = birdPool.Get();
+            Renderer rend = bird.GetComponentInChildren<Renderer>();
+            MaterialPropertyBlock block = new MaterialPropertyBlock();
+            block.SetColor("_SelectedColor", selectedColor);
+            rend.SetPropertyBlock(block);
+
             Rigidbody body = bird.GetComponent<Rigidbody>();
             body.position = body.transform.position = launchPivot.position;
             
