@@ -20,18 +20,26 @@ public class Bird : MonoBehaviour, IPoolable<Bird>
     float gottenTime;
     bool isDespawning = false;
 
-    Rigidbody body;
+    [HideInInspector]
+    public bool launched = false;
+
+    [HideInInspector]
+    public Rigidbody body;
     Renderer rend;
     Pool<Bird> pool;
 
     private void Awake() {
         body = GetComponent<Rigidbody>();
+        body.isKinematic = true;
         rend = GetComponent<Renderer>();
 
         //rend.
     }
 
     private void Update() {
+        if(!launched)
+            return;
+
         if(!isDespawning && (gottenTime + 2.0f < Time.time || (rend != null && !rend.isVisible)))
         {
             StartCoroutine(Despawn());

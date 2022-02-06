@@ -101,7 +101,7 @@ public class Painting : MonoBehaviour, ITarget
         transform.DOShakePosition(shakeDuration, shakeStrength, 10, 90, false, true);
     }
 
-    private void LateUpdate() {
+    private void Update() {
         TriggerBrush();
     }
 

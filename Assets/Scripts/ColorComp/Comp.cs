@@ -3,69 +3,89 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+using UnityEngine.Jobs;
+using Unity.Collections;
+using Unity.Burst;
+using Unity.Jobs;
+using Unity.Mathematics;
+
+[BurstCompile]
+public struct RoundTextureJob : IJobParallelFor
+{
+    [ReadOnly]
+    NativeArray<Vector4> source;
+
+    [WriteOnly]
+    NativeArray<Vector4> target;
+
+    NativeArray<Vector4> palette;
+    public int width, height, roundRadius;
+
+    public void Execute(int index)
+    {
+        int x = index % width;
+        int y = index / width;
+
+        
+
+        source[index] = target[index];
+    }
+}
+
 public class Comp : MonoBehaviour
 {
     public PaintingImage image;
 
-    public Texture2D result;
+    public Texture2D result0;
+    public Texture2D result1;
 
-    void Start ()
-    {
-        Round(image);
+    void Start () {
+        result0 = Average(image.image);
     }
 
-    void Round (PaintingImage image)
-    {
-        result = new Texture2D(image.image.width, image.image.height);
-        result.filterMode = FilterMode.Point;
+    Texture2D Round (Texture2D img) {
+        Texture2D  result0 = new Texture2D(img.width, img.height);
+        result0.filterMode = FilterMode.Point;
 
-        for (int y = 0; y < image.image.height; y++)
+        for (int y = 0; y < img.height; y++)
         {
-            for (int x = 0; x < image.image.width; x++)
+            for (int x = 0; x < img.width; x++)
             {
-                Color i = GetClosestColor(image.image.GetPixel(x,y), image.palette);
-                result.SetPixel(x,y, i);
+                Color i = GetClosestColor(img.GetPixel(x,y), image.palette);
+                result0.SetPixel(x,y, i);
             }
         }
 
-        result.Apply();
+        result0.Apply();
+        return result0;
     }
 
-/*
-    int GetClosestColor (Color c, Color[] palette)
-    {
-        Color.RGBToHSV(c, out float H, out float S, out float V);
-
-        var num1 = ColorNum(target);
-        var diffs = palette.Select(n => Mathf.Abs(ColorNum(n) - num1) + 
-                                    getHueDistance(n.GetHue(), H) );
-
-        var diffMin = diffs.Min(x => x);
-        return diffs.ToList().FindIndex(n => n == diffMin);
-    }
-
-        // color brightness as perceived:
-    float getBrightness(Color c)  
-        { return (c.r * 0.299f + c.g * 0.587f + c.b *0.114f) / 256f;}
-
-    // distance between two hues:
-    float getHueDistance(float hue1, float hue2)
-    { 
-        float d = Mathf.Abs(hue1 - hue2); return d > 180 ? 360 - d : d; }
-
-    //  weighed only by saturation and brightness (from my trackbars)
-    float ColorNum(Color c) { 
-        return c.GetSaturation() * factorSat + getBrightness(c) * factorBri; 
+    Texture2D Average (Texture2D texture) {
+        Texture2D result1 = new Texture2D(image.image.width, image.image.height);
+        result1.filterMode = FilterMode.Point;
         
+        int radius = 6;
+        int sumdiv = (radius * 2 + 1) * (radius * 2 + 1);
+
+        for (int y = 0; y < image.image.height; y++) {
+            for (int x = 0; x < image.image.width; x++) {
+                Vector4 sum = Vector4.zero;
+                
+                for (int dx = -radius; dx <= radius; dx++)                {
+                    for (int dy = -radius; dy <= radius; dy++) {
+                        sum += (Vector4)texture.GetPixel(x + dx,y + dy);
+                    }
+                }
+
+                sum /= (float)sumdiv;
+                Color i = GetClosestColor((Color)sum, image.palette);
+                result1.SetPixel(x,y, i);
+            }
         }
 
-    // distance in RGB space
-    int ColorDiff(Color c1, Color c2) 
-        { return  (int ) Mathf.Sqrt((c1.r - c2.r) * (c1.r - c2.r) 
-                                + (c1.g - c2.g) * (c1.g - c2.g)
-                                + (c1.b - c2.b) * (c1.b - c2.b)); }
-
-*/
+        result1.Apply();
+        return result1;
+    }
 
     private static Color GetClosestColor(Color baseColor, Color[] colorArray)
     {
@@ -77,10 +97,10 @@ public class Comp : MonoBehaviour
 
     private static int GetDiff(Color color, Color baseColor)
     {
-        int a = Mathf.RoundToInt(255 * color.a) - Mathf.RoundToInt(2555 * baseColor.a),
-            r = Mathf.RoundToInt(255 * color.r) - Mathf.RoundToInt(2555 * baseColor.r),
-            g = Mathf.RoundToInt(255 * color.g) - Mathf.RoundToInt(2555 * baseColor.g),
-            b = Mathf.RoundToInt(255 * color.b) - Mathf.RoundToInt(2555 * baseColor.b);
+        int a = Mathf.RoundToInt(255 * color.a) - Mathf.RoundToInt(255 * baseColor.a),
+            r = Mathf.RoundToInt(255 * color.r) - Mathf.RoundToInt(255 * baseColor.r),
+            g = Mathf.RoundToInt(255 * color.g) - Mathf.RoundToInt(255 * baseColor.g),
+            b = Mathf.RoundToInt(255 * color.b) - Mathf.RoundToInt(255 * baseColor.b);
         return a*a + r*r + g*g + b*b;
     }
 

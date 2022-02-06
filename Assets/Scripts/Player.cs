@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using UnityEngine.UI;
+using TMPro;
+
 public class Player : MonoBehaviour
 {
     public Color selectedColor;
@@ -15,6 +18,8 @@ public class Player : MonoBehaviour
     public float throwAngle = 30.0f;
     public Transform launchPivot;
     public LineRenderer projectilePath;
+    
+    public float cooldown = 0.2f;
 
     public bool allowInput;
     public Painting painting;
@@ -22,6 +27,11 @@ public class Player : MonoBehaviour
 
     public float minTorque = 100.0f;
     public float maxTorque = 400.0f;
+
+    public float minScale = 0.2f;
+    public float maxScale = 2.0f;
+    public int scaleSteps = 9;
+    public TextMeshProUGUI scaleText;
 
     [Header("targeting")]
     public Transform targetHitPoint;
@@ -42,9 +52,14 @@ public class Player : MonoBehaviour
     [Header("main cam")]
     public Camera mainCamera;
 
+    Bird inHand;
+    float lastThrowTime;
+
     Pool<Bird> birdPool;
     [SerializeField, NaughtyAttributes.ReadOnly]
     float xAxisClamp, yAxisClamp;
+
+    int currentScaleStep;
 
     private void Awake() {
         if(painting == null)
@@ -56,11 +71,48 @@ public class Player : MonoBehaviour
         birdPool = new Pool<Bird>(birdPrefab, 12);
         Cursor.lockState = CursorLockMode.Locked;
         //Cursor.visible = false;
+        
+        currentScaleStep = 4;
+
+        lastThrowTime = Time.time;
+        CreateBirdInHand();
+    }
+
+    void CreateBirdInHand ()
+    {
+        inHand = birdPool.Get(launchPivot);
+        inHand.transform.localPosition = Vector3.zero;
+        inHand.body.isKinematic = true;
+        inHand.launched = false;
+
+        Collider[] colliders = inHand.GetComponentsInChildren<Collider>();
+        for (int i = 0; i < colliders.Length; i++)
+            colliders[i].enabled = false;
+
+        Renderer rend = inHand.GetComponentInChildren<Renderer>();
+        MaterialPropertyBlock block = new MaterialPropertyBlock();
+        block.SetColor("_SelectedColor", selectedColor);
+        rend.SetPropertyBlock(block);
     }
 
     private void Update() {
 
         RotateCamera();
+
+        if(inHand != null)
+        {
+            inHand.transform.localPosition = Vector3.zero;
+            inHand.transform.localRotation = Quaternion.identity;
+
+            currentScaleStep += Mathf.RoundToInt(Input.mouseScrollDelta.y);
+            currentScaleStep = Mathf.Clamp(currentScaleStep, 1, scaleSteps);
+            scaleText.text = currentScaleStep.ToString();
+
+            float scale = Mathf.Lerp(minScale, maxScale, (float)(currentScaleStep-1) / (float)scaleSteps);
+            inHand.transform.localScale = Vector3.one * scale;
+
+
+        }
         
         float enter;
 
@@ -83,27 +135,42 @@ public class Player : MonoBehaviour
             }
         }
 
-        if(Input.GetMouseButtonDown(0))
+        if(lastThrowTime + cooldown < Time.time)
         {
-            Vector3 launch = LaunchDirection() * LaunchForce();
-            if(float.IsNaN(launch.x) || float.IsNaN(launch.y) || float.IsNaN(launch.z))
+                inHand.gameObject.SetActive(true);
+
+            if(Input.GetMouseButtonDown(0))
             {
-                launch = head.forward * 10.0f;
+                lastThrowTime = Time.time;
+
+                Vector3 launch = LaunchDirection() * LaunchForce();
+                if(float.IsNaN(launch.x) || float.IsNaN(launch.y) || float.IsNaN(launch.z))
+                {
+                    launch = head.forward * 10.0f;
+                }
+
+                Bird bird = inHand;
+                bird.transform.SetParent(null);
+                Collider[] colliders = bird.GetComponentsInChildren<Collider>();
+                for (int i = 0; i < colliders.Length; i++)
+                    colliders[i].enabled = true;
+
+                Rigidbody body = bird.GetComponent<Rigidbody>();
+                body.position = body.transform.position = launchPivot.position;
+                body.isKinematic = false;
+                body.AddForce(launch, ForceMode.VelocityChange);
+                body.AddTorque(Random.onUnitSphere * Random.Range(minTorque, maxTorque));
+                body.velocity += Vector3.forward * speed;
+                inHand.launched = true;
+
+                inHand = null;
+                CreateBirdInHand();
+                inHand.gameObject.SetActive(false);
+                // CREATE NEXT BIRD
             }
-
-            Bird bird = birdPool.Get();
-            Renderer rend = bird.GetComponentInChildren<Renderer>();
-            MaterialPropertyBlock block = new MaterialPropertyBlock();
-            block.SetColor("_SelectedColor", selectedColor);
-            rend.SetPropertyBlock(block);
-
-            Rigidbody body = bird.GetComponent<Rigidbody>();
-            body.position = body.transform.position = launchPivot.position;
-            
-            body.AddForce(launch, ForceMode.VelocityChange);
-            body.AddTorque(Random.onUnitSphere * Random.Range(minTorque, maxTorque));
-            body.velocity += Vector3.forward * speed;
         }
+
+       
 
         if(run)
         {
@@ -125,6 +192,13 @@ public class Player : MonoBehaviour
     public void SelectColor (Color color)
     {
         this.selectedColor = color;
+        if(inHand != null)
+        {
+            Renderer rend = inHand.GetComponentInChildren<Renderer>();
+            MaterialPropertyBlock block = new MaterialPropertyBlock();
+            block.SetColor("_SelectedColor", selectedColor);
+            rend.SetPropertyBlock(block);
+        }
     }
 
     private void RotateCamera()
