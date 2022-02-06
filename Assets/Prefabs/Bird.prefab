@@ -115,7 +115,7 @@ MonoBehaviour:
       minPitch: 0
       maxPitch: 0
       pitch: 1
-      volume: 0.5
+      volume: 0.075
   collisionNormalForce: 0
   hits: 0
   launched: 0
