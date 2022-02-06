@@ -122,6 +122,11 @@ public class Player : MonoBehaviour
         return Quaternion.LookRotation(dir, (Mathf.Abs(Vector3.Dot(dir, Vector3.up)) > 1.0f - Mathf.Epsilon) ? Vector3.right : Vector3.up);
     }
 
+    public void SelectColor (Color color)
+    {
+        this.selectedColor = color;
+    }
+
     private void RotateCamera()
     {
         float mouseX = Input.GetAxis("Mouse X");
