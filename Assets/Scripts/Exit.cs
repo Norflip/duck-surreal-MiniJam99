@@ -12,8 +12,9 @@ public class Exit : MonoBehaviour
 #if UNITY_EDITOR
             Debug.Break();
 #else
-            Application.Exit();
+            Application.Quit();
 #endif
+
         }
     }
 }
