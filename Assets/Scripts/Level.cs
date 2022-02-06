@@ -37,6 +37,10 @@ public class OpenFileName
 
 public class Level : MonoBehaviour
 {
+    public Material clipboardMaterial;
+    public GameObject clipBoardObject;
+
+
     public Player player;
     public MiniDuckController miniducks;
     public Painting painting;
@@ -50,7 +54,7 @@ public class Level : MonoBehaviour
     [DllImport("Comdlg32.dll", SetLastError = true, ThrowOnUnmappableChar = true, CharSet = CharSet.Auto)]
     public static extern bool GetSaveFileName ([In, Out] OpenFileName ofn);
 
-
+    public RawImage refPic, yourPic;
     public Image timerBar;
     public float maxTime = 5f;
     float timeLeft;
@@ -89,6 +93,9 @@ public class Level : MonoBehaviour
         //timerBar = GetComponent<Image>();
         timeLeft = maxTime;
         endScreen.SetActive(false);
+
+        Texture newtext = paintings[selectedPainting].image;
+        clipBoardObject.GetComponent<MeshRenderer>().material.mainTexture = newtext;        
     }
 
     void Update ()
@@ -115,17 +122,24 @@ public class Level : MonoBehaviour
         }
         else
         {
-            for (int i = 0; i < stuffToDeActivate.Length; i++)
-                stuffToDeActivate[i].SetActive(false);
-            Time.timeScale = 0;
-            endScreen.SetActive(true);
+            EndLevel();
         }
 
     }
 
     public void EndLevel ()
     {
-        
+        for (int i = 0; i < stuffToDeActivate.Length; i++)
+            stuffToDeActivate[i].SetActive(false);
+
+        Physics.autoSimulation = false;
+       // Time.timeScale = 0;
+        endScreen.SetActive(true);
+        refPic.texture = paintings[selectedPainting].image;
+        yourPic.texture = painting.resultTexture;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
     }
 
     public Texture2D tosave;
