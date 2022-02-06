@@ -98,6 +98,7 @@ public class Level : MonoBehaviour
         else
         {
             EndLevel();
+            this.enabled = false;
         }
 
     }
@@ -114,9 +115,11 @@ public class Level : MonoBehaviour
         yourPic.texture = painting.resultTexture;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        selectedPainting = PlayerPrefs.GetInt("SelectedIndex", selectedPainting);
 
-        float percentage = GetComponent<Comp>().Compare(painting.resultTexture, paintings[selectedPainting]);
+        float percentage = Mathf.Lerp(0.13f, 1.08f, UnityEngine.Random.value);////GetComponent<Comp>().Compare(painting.resultTexture, paintings[selectedPainting]);
         string res = "";
+
         if(percentage < 0.5f)
         {
             res = "Below average";
