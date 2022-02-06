@@ -35,7 +35,7 @@ public class ClipboardSelection : MonoBehaviour
     public void StartGame()
     {
         PlayerPrefs.SetInt("SelectedIndex", selectedBoard);
-       // SceneManager.LoadScene(1);
+        SceneManager.LoadScene(1);
 
     }
 }
