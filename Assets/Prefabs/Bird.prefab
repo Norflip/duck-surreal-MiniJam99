@@ -115,22 +115,23 @@ MonoBehaviour:
       minPitch: 0
       maxPitch: 0
       pitch: 1
-      volume: 0.075
+      volume: 0.35
     - clip: {fileID: 8300000, guid: 311c1eab69777304b99119369001a494, type: 3}
       randomizePitch: 0
       minPitch: 0
       maxPitch: 0
       pitch: 1
-      volume: 0.075
+      volume: 0.35
     - clip: {fileID: 8300000, guid: a37c260e398faa34ba1a091dc398bb5c, type: 3}
       randomizePitch: 0
       minPitch: 0
       maxPitch: 0
       pitch: 1
-      volume: 0.075
+      volume: 0.35
   collisionNormalForce: 0
   hits: 0
   launched: 0
+  hasPlayedAudio: 0
   body: {fileID: 0}
 --- !u!1001 &7962320246141565873
 PrefabInstance:

@@ -1734,7 +1734,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -4.5, y: -2.600006}
+  m_AnchoredPosition: {x: -4.5, y: -2.5999756}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &878902323
@@ -2240,7 +2240,7 @@ MonoBehaviour:
   yourPic: {fileID: 618922090}
   resultText: {fileID: 1939500973}
   timerBar: {fileID: 51134829}
-  maxTime: 10
+  maxTime: 90
   stuffToDeActivate:
   - {fileID: 126428096}
   - {fileID: 853020663}
