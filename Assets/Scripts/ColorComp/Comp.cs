@@ -7,7 +7,6 @@ public class Comp : MonoBehaviour
 {
     public PaintingImage image0;
     public PaintingImage image1;
-    
 
     public ComputeShader round_cs;
     public ComputeShader compare_cs;
@@ -47,6 +46,8 @@ public class Comp : MonoBehaviour
 
     public float Compare (RenderTexture rt, PaintingImage image)
     {
+       //RenderTexture a = RoundTextureToPalette(m0);
+        //RenderTexture b = RoundTextureToPalette(m1);
         int maxValue = image.image.width * image.image.height * 10;
         int[] c= new int[1]{0};
         ComputeBuffer counter = new ComputeBuffer(1, sizeof(int));
@@ -59,9 +60,10 @@ public class Comp : MonoBehaviour
         int thrx = Mathf.CeilToInt(image.image.width / 8.0f);
         int thry = Mathf.CeilToInt(image.image.height / 8.0f);
         compare_cs.Dispatch(0, thrx, thry, 1);
-
         counter.GetData(c);
-        float percentage = c[0] / maxValue;
+
+        float percentage = (float)c[0] / (image.image.width * image.image.height * 10.0f); //1.0f - (c[0] / 255.0f) / (m0.image.width * m0.image.height);
+
         counter.Dispose();
         return percentage;
     }

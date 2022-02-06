@@ -1588,7 +1588,6 @@ MonoBehaviour:
   - {fileID: 126428096}
   - {fileID: 853020663}
   endScreen: {fileID: 22234736}
-  tosave: {fileID: 0}
 --- !u!114 &1192930227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1601,11 +1600,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c253d95fb72a37a46bf03f4ae187254c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  image0: {fileID: 0}
+  image1: {fileID: 0}
   round_cs: {fileID: 7200000, guid: a6076753dbb793b40a8b08aa71687063, type: 3}
-  compare_cs: {fileID: 0}
-  image: {fileID: 0}
-  result0: {fileID: 0}
-  result1: {fileID: 0}
+  compare_cs: {fileID: 7200000, guid: e1a5b0416a58dc34188915b7734fd2c1, type: 3}
 --- !u!1 &1226611710
 GameObject:
   m_ObjectHideFlags: 0
