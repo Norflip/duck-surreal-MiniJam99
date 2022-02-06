@@ -47,14 +47,9 @@ public class Level : MonoBehaviour
         }
 
         select.Populate(paintings[selectedPainting], player.SelectColor);
-
-        int xres = paintings[selectedPainting].image.width;
-        int yres = paintings[selectedPainting].image.height;
-        Debug.Log($"x: {xres} y {yres} aspect: {(float)xres / (float)yres}");
-        painting.Initialize(xres, yres);
+        painting.Initialize(paintings[selectedPainting]);
         player.run = true;
         miniducks.run = true;
-
 
         for (int i = 0; i < stuffToDeActivate.Length; i++)
             stuffToDeActivate[i].SetActive(true);
@@ -91,7 +86,6 @@ public class Level : MonoBehaviour
             Time.timeScale = 0;
             endScreen.SetActive(true);
         }
-
     }
 
     public void EndLevel ()

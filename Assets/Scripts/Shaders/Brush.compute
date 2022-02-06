@@ -4,6 +4,9 @@
 
 uniform Texture2D<float4> _DepthTexture;
 uniform RWTexture2D<float4> _Result;
+uniform Texture2D<float4> _Guide;
+uniform float _UseGuide;
+
 uniform float4 _ZBufferParams;
 uniform float4 _Color;
 uniform int2 _Size;
@@ -53,12 +56,12 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 
     float xo = snoise(id.xy / 0.05f) * TAU;
     int2 offset = int2(cos(xo) * BLUR_RADIUS, sin(xo) * BLUR_RADIUS);
-
     float depth = Linear01Depth(SampleBlured(id.xy + offset));
-    
     float a = round((1.0 - depth) / ALPHA_STEP) * ALPHA_STEP;
 
-    float4 brushColor = float4(_Color.rgb, a); //float4(depth,depth,depth, 1.0);// (_DepthTexture[id.xy]);//float4(depth, depth, depth, 1.0);//float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+    float4 brushColor = float4(_Color.rgb, a) * a; //float4(depth,depth,depth, 1.0);// (_DepthTexture[id.xy]);//float4(depth, depth, depth, 1.0);//float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
 
-    _Result[id.xy] = lerp(_Result[id.xy], brushColor * a, a);
+    brushColor = lerp(brushColor, lerp(brushColor, _Guide[id.xy], 0.1f), _UseGuide);
+
+    _Result[id.xy] = lerp(_Result[id.xy], brushColor, a);
 }

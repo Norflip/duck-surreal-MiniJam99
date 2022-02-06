@@ -5,16 +5,8 @@ using UnityEngine;
 
 public class Comp : MonoBehaviour
 {
-    public PaintingImage image0;
-    public PaintingImage image1;
-
     public ComputeShader round_cs;
     public ComputeShader compare_cs;
-
-    private void Awake() {
-        Test(image0, image0);
-        Test(image0, image1);
-    }
 
     public void Test (PaintingImage m0, PaintingImage m1)
     {
