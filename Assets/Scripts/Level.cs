@@ -115,7 +115,7 @@ public class Level : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        float percentage = GetComponent<Comp>().Compare(painting.resultTexture, paintings[selectedPainting]) + 0.24f;
+        float percentage = GetComponent<Comp>().Compare(painting.resultTexture, paintings[selectedPainting]);
         string res = "";
         if(percentage < 0.5f)
         {

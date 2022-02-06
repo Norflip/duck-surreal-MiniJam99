@@ -21,6 +21,7 @@ public class Bird : MonoBehaviour, IPoolable<Bird>
 
     [HideInInspector]
     public bool launched = false;
+    public bool hasPlayedAudio = false;
 
     [HideInInspector]
     public Rigidbody body;
@@ -72,7 +73,11 @@ public class Bird : MonoBehaviour, IPoolable<Bird>
             body.AddForce(painting.GetPlane().normal * collisionNormalForce);
             Particles.SpawnFeathers(painting.transform, transform.position);
 
-            AudioRunner.Play3D(collisionSound, transform.position);
+            if(!hasPlayedAudio)
+            {
+                hasPlayedAudio = true;
+                AudioRunner.Play3D(collisionSound, transform.position);
+            }
 
             StartCoroutine(SetLayer());
             hits++;
@@ -88,6 +93,7 @@ public class Bird : MonoBehaviour, IPoolable<Bird>
         gottenTime = Time.time;
         body.velocity = body.angularVelocity = Vector3.zero;
         isDespawning = false;
+        hasPlayedAudio = false;
     }
 
     public void Returned() 
