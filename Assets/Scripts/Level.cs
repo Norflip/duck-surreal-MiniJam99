@@ -83,7 +83,8 @@ public class Level : MonoBehaviour
         int xres = paintings[selectedPainting].image.width;
         int yres = paintings[selectedPainting].image.height;
         Debug.Log($"x: {xres} y {yres} aspect: {(float)xres / (float)yres}");
-        painting.Initialize(xres, yres);
+        
+        painting.Initialize(paintings[selectedPainting]);
         player.run = true;
         miniducks.run = true;
 
