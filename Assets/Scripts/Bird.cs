@@ -11,10 +11,9 @@ public class Bird : MonoBehaviour, IPoolable<Bird>
     public int layerAfterPainted;
 
     public ParticleSystem collisionParticles;
-    public Sound collisionSound;
+    public SoundCollection collisionSound;
     
     public float collisionNormalForce = 500.0f;
-    
     public int hits = 0;
 
     float gottenTime;
