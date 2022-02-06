@@ -1,0 +1,59 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+uniform Texture2D<float4> _Source;
+uniform RWTexture2D<float4> _Result;
+uniform StructuredBuffer<float4> _Palette;
+#define COLORS_IN_PALETTE 8
+
+#define RADIUS 5
+#define SUM_RE ((RADIUS*2+1)*(RADIUS*2+1))
+
+int GetColorDiff (float4 c0, float4 c1)
+{
+    int r = (int)(round(c0.r * 255) - round(c1.r * 255));
+    int g = (int)(round(c0.g * 255) - round(c1.g * 255));
+    int b = (int)(round(c0.b * 255) - round(c1.b * 255));
+    int a = (int)(round(c0.a * 255) - round(c1.a * 255));
+    return a*a + r*r + g*g + b*b;
+}
+
+int GetClosestColor (float4 c)
+{
+    int selected = 0;
+    int currentDif = GetColorDiff(c, _Palette[0]);
+    int dif;
+
+    [unroll(COLORS_IN_PALETTE)]
+    for(int i = 1; i < COLORS_IN_PALETTE; i++)
+    {
+        dif = GetColorDiff(c, _Palette[i]);
+        if(dif < currentDif)
+        {
+            selected = i;
+            dif = currentDif;
+        }
+    }
+
+    return selected;
+}
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    float4 sum = 0;
+
+    [unroll]
+    for(int y = -RADIUS; y <= RADIUS; y++)
+    {
+        [unroll]
+        for(int x = -RADIUS; x <= RADIUS; x++)
+        {
+            uint2 p = id.xy + int2(x,y);
+            sum += _Source[p];
+        }
+    }
+
+    int i = GetClosestColor(sum / SUM_RE);
+    _Result[id.xy] = _Palette[i];
+}
