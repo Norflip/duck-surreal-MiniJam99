@@ -8,9 +8,16 @@ public class PaintingPivot : MonoBehaviour
     [Header("player and movement")]
     public Transform player;
     public float forwardDistace;
+    
+    [Header("hover")]
     public float hoverSpeed;
     public float hoverLength;
     public AnimationCurve hoverCurve;
+
+    [Header("x")]
+    public float xSpeed;
+    public float xLength;
+    public AnimationCurve xCurve;
 
     public float headHeight;
     public LayerMask terrainlayer;
@@ -33,6 +40,9 @@ public class PaintingPivot : MonoBehaviour
         hover_t = hoverCurve.Evaluate(Mathf.PingPong(Time.time * hoverSpeed, 1.0f));
         next.y += hover_t * hoverLength;
    
+        float xt = Mathf.Lerp(-xLength, xLength, xCurve.Evaluate(Mathf.PingPong(Time.time * xSpeed, 1.0f)));
+        next.x += xt * xLength;
+
         transform.position = next;
 
         if(billboard)

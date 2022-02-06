@@ -79,7 +79,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   paintingLayer: 9
   timeToPaint: 0.1
-  layerAfterPainted: 6
+  layerAfterPainted: 0
   collisionParticles: {fileID: 0}
   collisionClip: {fileID: 0}
   collisionNormalForce: 0
@@ -208,6 +208,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 4418834999246775707, guid: 38c6522e95ecd6940ba26ee41651b641, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 3e818d8043bad2e40afc0d75a508480f, type: 2}
     - target: {fileID: 4746043709347397969, guid: 38c6522e95ecd6940ba26ee41651b641, type: 3}
       propertyPath: m_Layer
       value: 7
