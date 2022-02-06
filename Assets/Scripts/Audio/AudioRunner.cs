@@ -52,6 +52,11 @@ public class AudioRunner : MonoBehaviour
         src.clip = sound.clip;
         src.pitch = sound.randomizePitch? Random.Range(sound.minPitch, sound.maxPitch) : sound.pitch;
 
+        if(src.pitch == 0.0f)
+        {
+            Debug.LogWarning("PITCH IS ZERO DUDE");
+        }
+        
         src.Stop();
         src.Play();
 
@@ -60,13 +65,20 @@ public class AudioRunner : MonoBehaviour
 
     void Internal_Play3D(Sound sound, Vector3 position, System.Action<AudioSource> callback = null)
     {
+
+        
         AudioSource src = sourcePool.Get();
         callback?.Invoke(src);
         src.spatialBlend = 1.0f;
         src.clip = null;
         src.clip = sound.clip;
         src.pitch = sound.randomizePitch? Random.Range(sound.minPitch, sound.maxPitch) : sound.pitch;
-        
+
+        if(src.pitch == 0.0f)
+        {
+            Debug.LogWarning("PITCH IS ZERO DUDE");
+        }
+
         src.transform.position = position;
         src.Stop();
         src.Play();
