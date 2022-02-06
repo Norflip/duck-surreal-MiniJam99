@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
 using UnityEngine.UI;
+using TMPro;
 
 public class Level : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public class Level : MonoBehaviour
     public static extern bool GetSaveFileName ([In, Out] OpenFileName ofn);
 */
     public RawImage refPic, yourPic;
+    public TextMeshProUGUI resultText;
+
     public Image timerBar;
     public float maxTime = 5f;
     float timeLeft;
@@ -82,7 +85,8 @@ public class Level : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            //ShowFiledialogToSaveImage();
+            float c = GetComponent<Comp>().Compare(painting.resultTexture, paintings[selectedPainting]);
+            Debug.Log(c);
         }
 
 
@@ -111,5 +115,21 @@ public class Level : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
+        float percentage = GetComponent<Comp>().Compare(painting.resultTexture, paintings[selectedPainting]) + 0.24f;
+        string res = "";
+        if(percentage < 0.5f)
+        {
+            res = "Below average";
+        }
+        else if (percentage < 0.8f)
+        {
+            res = "Pretty good";
+        }
+        else
+        {
+            res = "Perfect!";
+        }
+
+        resultText.text = $"The final judgement of the duck is...\n\"{res}\" ({Mathf.RoundToInt(percentage * 100)}%)";
     }
 }
