@@ -3,14 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
 public class ClipboardSelection : MonoBehaviour
 {
     public GameObject[] clipBoards;
     public int selectedBoard = 0;
+    public AudioClip birdClip;
+    private AudioSource source;
 
     public void Start()
     {
         clipBoards[0].SetActive(true);
+        source = GetComponent<AudioSource>();
+        source.clip = birdClip;
     }
     public void NextBoard()
     {
@@ -18,6 +23,9 @@ public class ClipboardSelection : MonoBehaviour
         selectedBoard = (selectedBoard + 1) % clipBoards.Length;
         Debug.Log(selectedBoard);
         clipBoards[selectedBoard].SetActive(true);
+        source.clip = birdClip;
+        source.Play();
+
     }
 
     public void PreviousBoard()
@@ -29,6 +37,8 @@ public class ClipboardSelection : MonoBehaviour
             selectedBoard += clipBoards.Length;
         }
         clipBoards[selectedBoard].SetActive(true);
+
+        source.Play();
     }
 
     // Start game ? 
