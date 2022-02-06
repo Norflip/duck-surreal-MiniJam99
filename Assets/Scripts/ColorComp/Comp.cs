@@ -3,44 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-using UnityEngine.Jobs;
-using Unity.Collections;
-using Unity.Burst;
-using Unity.Jobs;
-using Unity.Mathematics;
-
-[BurstCompile]
-public struct RoundTextureJob : IJobParallelFor
-{
-    [ReadOnly]
-    NativeArray<Vector4> source;
-
-    [WriteOnly]
-    NativeArray<Vector4> target;
-
-    NativeArray<Vector4> palette;
-    public int width, height, roundRadius;
-
-    public void Execute(int index)
-    {
-        int x = index % width;
-        int y = index / width;
-
-        
-
-        source[index] = target[index];
-    }
-}
-
 public class Comp : MonoBehaviour
 {
+    public ComputeShader round_cs;
+    public ComputeShader compare_cs;
+    
     public PaintingImage image;
-
     public Texture2D result0;
     public Texture2D result1;
 
     void Start () {
         result0 = Average(image.image);
+    }
+
+    public RenderTexture RoundedTexture (PaintingImage image)
+    {
+        RenderTexture rt = new RenderTexture(image.image.width, image.image.height, 0);
+        
+        round_cs.SetTexture(0, "_Source", image.image);
+        round_cs.SetTexture(0, "_Target", rt);
+        round_cs.SetInt("_Radius", 5);
+
+        int thrx = Mathf.CeilToInt(image.image.width / 32.0f);
+        int thry = Mathf.CeilToInt(image.image.height / 32.0f);
+        round_cs.Dispatch(0, thrx, thry, 1);
+
+        return rt;
     }
 
     Texture2D Round (Texture2D img) {
