@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerPosition : MonoBehaviour
 {
     public float g_PlayerFade;
-    [Range(0.0f, 16.0f)]
+    [Range(0.0f, 32.0f)]
     public float g_PlayerRadius;
 
     void Update ()

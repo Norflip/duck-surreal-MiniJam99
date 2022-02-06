@@ -31,7 +31,7 @@ public class Bird : MonoBehaviour, IPoolable<Bird>
     }
 
     private void Update() {
-        if(gottenTime + 2.0f < Time.time || !rend.isVisible)
+        if(gottenTime + 2.0f < Time.time || (rend != null && !rend.isVisible))
         {
             pool.Return(this);
         }    

@@ -18,6 +18,9 @@ public class Player : MonoBehaviour
     public Painting painting;
     public Bird birdPrefab;
 
+    public float minTorque = 100.0f;
+    public float maxTorque = 400.0f;
+
     [Header("targeting")]
     public Transform targetHitPoint;
     public LayerMask hitLayerMask;
@@ -57,8 +60,10 @@ public class Player : MonoBehaviour
 
         RaycastHit hit;
         Ray ray = new Ray(head.position, head.forward);
-        
-        if(Physics.SphereCast(ray, radius, out hit, 100.0f, hitLayerMask.value))
+        targetHitPoint.position = head.position + head.forward * notHitForwardDistance;
+        targetHitPoint.rotation = LookRot(head.forward);
+
+        if(Physics.SphereCast(ray, radius, out hit, 1000.0f, hitLayerMask.value))
         {
             ITarget t = hit.transform.GetComponent<ITarget>();
             if(t != null)
@@ -71,28 +76,21 @@ public class Player : MonoBehaviour
                 }
             }
         }
-        else
-        {
-            targetHitPoint.position = head.position + head.forward * notHitForwardDistance;
-            targetHitPoint.rotation = LookRot(head.forward);
-        }
 
         if(Input.GetMouseButtonDown(0))
         {
             Vector3 launch = LaunchDirection() * LaunchForce();
             if(float.IsNaN(launch.x) || float.IsNaN(launch.y) || float.IsNaN(launch.z))
             {
-                Debug.Log(LaunchDirection());
-                Debug.Log(LaunchForce());
-                Debug.Assert(false);
+                launch = head.forward * 10.0f;
             }
 
             Bird bird = birdPool.Get();
             Rigidbody body = bird.GetComponent<Rigidbody>();
             body.position = body.transform.position = launchPivot.position;
+            
             body.AddForce(launch, ForceMode.VelocityChange);
-            body.AddTorque(Random.onUnitSphere * 200.0f);
-
+            body.AddTorque(Random.onUnitSphere * Random.Range(minTorque, maxTorque));
             body.velocity += Vector3.forward * speed;
         }
 
@@ -110,8 +108,7 @@ public class Player : MonoBehaviour
 
     Quaternion LookRot (Vector3 dir)
     {
-        Quaternion rot = Quaternion.LookRotation(dir, (Mathf.Abs(Vector3.Dot(dir, Vector3.up)) > 1.0f - Mathf.Epsilon) ? Vector3.right : Vector3.up);
-        return rot;
+        return Quaternion.LookRotation(dir, (Mathf.Abs(Vector3.Dot(dir, Vector3.up)) > 1.0f - Mathf.Epsilon) ? Vector3.right : Vector3.up);
     }
 
     private void RotateCamera()
@@ -209,5 +206,8 @@ public class Player : MonoBehaviour
 
     private void OnDrawGizmos() {
         Gizmos.DrawLine(targetHitPoint.position, launchPivot.position);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(head.position, head.position + head.forward * 1.0f);
     }
 }

@@ -26,7 +26,7 @@ public struct MeshHeightJob : IJobParallelFor
 
 public class Chunk : MonoBehaviour
 {
-    public const int Size = 32;
+    public const int Size = 64;
 
     public int Index => index;
     [SerializeField] int index;
