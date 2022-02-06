@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public Color selectedColor;
+
     [Header("head")]
     public Transform head;
     public float mouseSensitivity = 1.2f;

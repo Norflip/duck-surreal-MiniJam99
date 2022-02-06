@@ -8,7 +8,8 @@ public class Painting : MonoBehaviour, ITarget
     const int RT_TEXTURE_DEPTH = 16;
     const int DISPATCH_GROUP_SZ = 32;
 
-    public Color color;
+    public Player player;
+    public Frame frame;
 
     [Header("res")]
     public Vector2Int resolution;
@@ -35,8 +36,11 @@ public class Painting : MonoBehaviour, ITarget
     [SerializeField, NaughtyAttributes.ReadOnly] RenderTexture brushTexture;
     [SerializeField, NaughtyAttributes.ReadOnly] RenderTexture resultTexture;
 
-    private void Awake() {
-        Initialize(resolution.x, resolution.y);
+    public bool initializeOnStart = false;
+
+    private void Start() {
+        if(initializeOnStart)
+            Initialize(resolution.x, resolution.y);
     }
 
     private void OnValidate() {
@@ -46,6 +50,9 @@ public class Painting : MonoBehaviour, ITarget
 
     public void Initialize (int width, int height)
     {
+        resolution = new Vector2Int(width, height);
+        SetCanvasSize();
+
         brushTexture = new RenderTexture(width, height, RT_TEXTURE_DEPTH);
         brushTexture.enableRandomWrite = false;
         brushTexture.filterMode = FilterMode.Point;
@@ -61,6 +68,7 @@ public class Painting : MonoBehaviour, ITarget
         paintCamera.depthTextureMode = paintCamera.depthTextureMode | DepthTextureMode.Depth;
         paintCamera.targetTexture = brushTexture;
 
+        frame.Generate();
         CenterCamera();
     }
 
@@ -114,7 +122,7 @@ public class Painting : MonoBehaviour, ITarget
         int thry = Mathf.CeilToInt(resolution.y / (float)DISPATCH_GROUP_SZ);
         brush_cs.SetTextureFromGlobal(0, "_DepthTexture", "_LastCameraDepthTexture");
         brush_cs.SetTexture(0, "_Result", temp);
-        brush_cs.SetVector("_Color", (Vector4)color);
+        brush_cs.SetVector("_Color", (Vector4)player.selectedColor);
         brush_cs.SetTexture(0, "_DitheringTexture", ditheringTexture);
         brush_cs.SetInts("_Size", resolution.x, resolution.y);
         brush_cs.Dispatch(0, thrx, thry, 1);

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IPoolable <T> where T : Behaviour
+public interface IPoolable <T> where T : Component
 {
     void Added (Pool <T> pool);
     void Gotten ();
@@ -14,7 +14,7 @@ public static class PoolContainer
     public static Transform g_root;
 }
 
-public class Pool <T> where T : Behaviour
+public class Pool <T> where T : Component
 {
     int count => stack.Count;
     Stack<T> stack;
