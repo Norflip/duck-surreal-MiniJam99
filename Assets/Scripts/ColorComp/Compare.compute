@@ -3,7 +3,7 @@
 
 uniform Texture2D<float4> _TextureA;
 uniform Texture2D<float4> _TextureB;
-uniform StructuredBuffer<int> _Counter;
+uniform RWStructuredBuffer<int> _Counter;
 
 [numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
