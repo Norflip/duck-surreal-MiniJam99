@@ -328,6 +328,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c253d95fb72a37a46bf03f4ae187254c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< Updated upstream
+=======
+  image0: {fileID: 11400000, guid: dd150d3cd48e9d64c8fa3dccb5baf876, type: 2}
+  image1: {fileID: 11400000, guid: 33430f8b9b7512b44933ae371b65c984, type: 2}
+>>>>>>> Stashed changes
   round_cs: {fileID: 7200000, guid: a6076753dbb793b40a8b08aa71687063, type: 3}
   compare_cs: {fileID: 7200000, guid: e1a5b0416a58dc34188915b7734fd2c1, type: 3}
 --- !u!4 &2088074954
