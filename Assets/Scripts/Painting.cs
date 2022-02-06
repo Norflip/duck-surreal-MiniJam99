@@ -31,9 +31,12 @@ public class Painting : MonoBehaviour, ITarget
     public float shakeDuration = 0.1f;
     public float shakeStrength = 0.1f;
 
+    
+
     [Header("debug")]
     [SerializeField, NaughtyAttributes.ReadOnly] RenderTexture brushTexture;
-    [SerializeField, NaughtyAttributes.ReadOnly] RenderTexture resultTexture;
+    [NaughtyAttributes.ReadOnly]
+    public RenderTexture resultTexture;
 
     public bool initializeOnStart = false;
 

@@ -6,14 +6,6 @@ public class Exit : MonoBehaviour
 {
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
-        {
-#if UNITY_EDITOR
-            Debug.Break();
-#else
-            Application.Quit();
-#endif
 
-        }
     }
 }
