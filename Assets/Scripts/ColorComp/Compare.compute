@@ -8,6 +8,9 @@ uniform RWStructuredBuffer<int> _Counter;
 [numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
-    float dif = abs(_TextureA[id.xy] - _TextureB[id.xy]);
-    InterlockedAdd(_Counter[0], floor(10 * (1.0 - dif)));
+    int same = 0;
+    same += (floor(_TextureA[id.xy].r * 255) == floor(_TextureB[id.xy].r * 255)) ? 1 : 0;
+    same += (floor(_TextureA[id.xy].g * 255) == floor(_TextureB[id.xy].g * 255)) ? 1 : 0;
+    same += (floor(_TextureA[id.xy].b * 255) == floor(_TextureB[id.xy].b * 255)) ? 1 : 0;
+    InterlockedAdd(_Counter[0], same);
 }
