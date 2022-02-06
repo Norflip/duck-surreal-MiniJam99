@@ -16,6 +16,8 @@ public struct Sound
     
     [NaughtyAttributes.HideIf("randomizePitch")]
     public float pitch;
+
+    public float volume;
 }
 
 public class AudioRunner : MonoBehaviour
@@ -51,8 +53,9 @@ public class AudioRunner : MonoBehaviour
         src.clip = null;
         src.clip = sound.clip;
         src.pitch = sound.randomizePitch? Random.Range(sound.minPitch, sound.maxPitch) : sound.pitch;
+        src.volume = sound.volume;
 
-        if(src.pitch == 0.0f)
+        if (src.pitch == 0.0f)
         {
             Debug.LogWarning("PITCH IS ZERO DUDE");
         }
@@ -73,8 +76,9 @@ public class AudioRunner : MonoBehaviour
         src.clip = null;
         src.clip = sound.clip;
         src.pitch = sound.randomizePitch? Random.Range(sound.minPitch, sound.maxPitch) : sound.pitch;
+        src.volume = sound.volume;
 
-        if(src.pitch == 0.0f)
+        if (src.pitch == 0.0f)
         {
             Debug.LogWarning("PITCH IS ZERO DUDE");
         }
