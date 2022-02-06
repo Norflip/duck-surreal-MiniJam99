@@ -40,18 +40,19 @@ public class Painting : MonoBehaviour, ITarget
 
     public bool initializeOnStart = false;
 
-    private void Start() {
-        if(initializeOnStart)
-            Initialize(resolution.x, resolution.y);
-    }
+    PaintingImage image;
 
     private void OnValidate() {
         SetCanvasSize();
         CenterCamera();
     }
 
-    public void Initialize (int width, int height)
+    public void Initialize (PaintingImage image)
     {
+        this.image = image;
+        int width = image.image.width;
+        int height = image.image.height;
+
         resolution = new Vector2Int(width, height);
         SetCanvasSize();
 
@@ -116,15 +117,17 @@ public class Painting : MonoBehaviour, ITarget
         Vector4 _ZBufferParams = new Vector4((paintCamera.farClipPlane / paintCamera.nearClipPlane) - 1.0f, 1.0f, 0.0f, 0.0f);        
         brush_cs.SetVector("_ZBufferParams", _ZBufferParams);
 
-        int thrx = Mathf.CeilToInt(resolution.x / (float)DISPATCH_GROUP_SZ);
-        int thry = Mathf.CeilToInt(resolution.y / (float)DISPATCH_GROUP_SZ);
-
+    
         brush_cs.SetTextureFromGlobal(0, "_DepthTexture", "_LastCameraDepthTexture");
-
-
+        brush_cs.SetTexture(0, "_Guide", image.image);
         brush_cs.SetTexture(0, "_Result", resultTexture);
+        brush_cs.SetFloat("_UseGuide", 1.0f);
+
         brush_cs.SetVector("_Color", (Vector4)player.selectedColor);
         brush_cs.SetInts("_Size", resolution.x, resolution.y);
+
+        int thrx = Mathf.CeilToInt(resolution.x / (float)DISPATCH_GROUP_SZ);
+        int thry = Mathf.CeilToInt(resolution.y / (float)DISPATCH_GROUP_SZ);
         brush_cs.Dispatch(0, thrx, thry, 1);
 
 

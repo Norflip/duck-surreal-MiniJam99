@@ -8,8 +8,6 @@ uniform RWStructuredBuffer<int> _Counter;
 [numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
-    float r = (dot(_TextureA[id.xy], _TextureB[id.xy]) + 1.0) * 0.5;
-    int v = 10 * r;
-    int g;
-    InterlockedAdd(_Counter[0], v, g);
+    float dif = abs(_TextureA[id.xy] - _TextureB[id.xy]);
+    InterlockedAdd(_Counter[0], floor(10 * (1.0 - dif)));
 }
