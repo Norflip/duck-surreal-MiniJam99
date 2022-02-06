@@ -247,9 +247,7 @@ MonoBehaviour:
   camOffset: 1
   camExtraThickness: 0.001
   material: {fileID: 2100000, guid: 729154c49686ecb4db8a466165a7f451, type: 2}
-  ditheringTexture: {fileID: 2800000, guid: 52922bdc4059eb54284c0cc3e127ced8, type: 3}
   brush_cs: {fileID: 7200000, guid: 2cc839af21d30514e86dd4eba0310512, type: 3}
-  composite_cs: {fileID: 7200000, guid: 692a41ca6ac028043908bc2600b0aa3b, type: 3}
   shakeDuration: 0.1
   shakeStrength: 0.02
   brushTexture: {fileID: 0}
@@ -469,7 +467,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 619845546}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: -23.86}
+  m_LocalPosition: {x: 0, y: 2, z: -35.19}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 882720475}
@@ -590,6 +588,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BigDuck
       objectReference: {fileID: 0}
+    - target: {fileID: 2492035535892958318, guid: ccffdfb554b0df044b435ee8ea304239, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a1e19cf35e435bf4a90e928fdfc5590f, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ccffdfb554b0df044b435ee8ea304239, type: 3}
 --- !u!4 &882720475 stripped
@@ -1203,6 +1205,8 @@ MonoBehaviour:
   terrainLayer:
     serializedVersion: 2
     m_Bits: 256
+  maxY: 10
+  hardCap: 0
   mainCamera: {fileID: 2097211256}
   xAxisClamp: 0
   yAxisClamp: 0

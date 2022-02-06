@@ -81,7 +81,12 @@ MonoBehaviour:
   timeToPaint: 0.1
   layerAfterPainted: 0
   collisionParticles: {fileID: 0}
-  collisionClip: {fileID: 0}
+  collisionSound:
+    clip: {fileID: 8300000, guid: 91909f5db828b5e4788b5fcb62ae3469, type: 3}
+    randomizePitch: 0
+    minPitch: 0
+    maxPitch: 0
+    pitch: 1
   collisionNormalForce: 0
   hits: 0
 --- !u!135 &4493619461167560469

@@ -7,12 +7,15 @@ public struct Sound
 {
     public AudioClip clip;
     
-    public float pitch;
-
     [Space(10.0f)]
     public bool randomizePitch;
+    [NaughtyAttributes.ShowIf("randomizePitch")]
     public float minPitch;
+    [NaughtyAttributes.ShowIf("randomizePitch")]
     public float maxPitch;
+    
+    [NaughtyAttributes.HideIf("randomizePitch")]
+    public float pitch;
 }
 
 public class AudioRunner : MonoBehaviour

@@ -24,9 +24,8 @@ public class Painting : MonoBehaviour, ITarget
     public float Aspect => (float)resolution.x / (float)resolution.y;
 
     public Material material;
-    public Texture2D ditheringTexture;
     public ComputeShader brush_cs;
-    public ComputeShader composite_cs;
+    //public ComputeShader composite_cs;
     
     [Header("tween")]        
     public float shakeDuration = 0.1f;
@@ -114,28 +113,16 @@ public class Painting : MonoBehaviour, ITarget
         Vector4 _ZBufferParams = new Vector4((paintCamera.farClipPlane / paintCamera.nearClipPlane) - 1.0f, 1.0f, 0.0f, 0.0f);        
         brush_cs.SetVector("_ZBufferParams", _ZBufferParams);
 
-
-        RenderTexture temp = RenderTexture.GetTemporary(resolution.x, resolution.y, 0);
-        temp.enableRandomWrite = true;
-
         int thrx = Mathf.CeilToInt(resolution.x / (float)DISPATCH_GROUP_SZ);
         int thry = Mathf.CeilToInt(resolution.y / (float)DISPATCH_GROUP_SZ);
+
         brush_cs.SetTextureFromGlobal(0, "_DepthTexture", "_LastCameraDepthTexture");
-        brush_cs.SetTexture(0, "_Result", temp);
+
+
+        brush_cs.SetTexture(0, "_Result", resultTexture);
         brush_cs.SetVector("_Color", (Vector4)player.selectedColor);
-        brush_cs.SetTexture(0, "_DitheringTexture", ditheringTexture);
         brush_cs.SetInts("_Size", resolution.x, resolution.y);
         brush_cs.Dispatch(0, thrx, thry, 1);
-
-        composite_cs.SetTexture(0, "_Brush", temp);
-        composite_cs.SetTexture(0, "_Result", resultTexture);
-        composite_cs.SetInts("_Size", resolution.x, resolution.y);
-        composite_cs.Dispatch(0, thrx, thry, 1);
-
-
-        RenderTexture.ReleaseTemporary(temp);
-
-
 
 
         material.SetTexture("_MainTex", resultTexture);
@@ -145,10 +132,5 @@ public class Painting : MonoBehaviour, ITarget
     public Plane GetPlane()
     {
         return new Plane(transform.forward * -1, transform.position);
-    }
-
-    public bool Raycast(Ray ray, out Vector3 normal)
-    {
-        throw new System.NotImplementedException();
     }
 }

@@ -10,9 +10,6 @@ uniform int2 _Size;
 float4 blend (float4 c0, float4 c1, float a)
 {
     return lerp(c0, c1, a);
-
-    // one minus source alpha
-    //return float4(c0.rgb * (1.0 - c0.a) + c1.rgb * c1.a, 1.0);
 }
 
 [numthreads(32,32,1)]

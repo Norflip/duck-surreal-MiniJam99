@@ -5,5 +5,4 @@ using UnityEngine;
 public interface ITarget
 {
     Plane GetPlane ();
-    bool Raycast (Ray ray, out Vector3 normal);
 }

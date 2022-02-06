@@ -6,7 +6,6 @@ uniform Texture2D<float4> _DepthTexture;
 uniform RWTexture2D<float4> _Result;
 uniform float4 _ZBufferParams;
 uniform float4 _Color;
-uniform Texture2D<float4> _DitheringTexture;
 uniform int2 _Size;
 
 // Z buffer to linear 0..1 depth
@@ -41,6 +40,11 @@ inline float SampleBlured (int2 uv) {
     return v / float(MAX_BLURS);
 }
 
+float4 blend (float4 c0, float4 c1, float a)
+{
+    return lerp(c0, c1, a);
+}
+
 [numthreads(32,32,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
@@ -54,5 +58,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     
     float a = round((1.0 - depth) / ALPHA_STEP) * ALPHA_STEP;
 
-    _Result[id.xy] = float4(_Color.rgb, a); //float4(depth,depth,depth, 1.0);// (_DepthTexture[id.xy]);//float4(depth, depth, depth, 1.0);//float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+    float4 brushColor = float4(_Color.rgb, a); //float4(depth,depth,depth, 1.0);// (_DepthTexture[id.xy]);//float4(depth, depth, depth, 1.0);//float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+
+    _Result[id.xy] = lerp(_Result[id.xy], brushColor * a, a);
 }

@@ -35,6 +35,10 @@ public class Player : MonoBehaviour
     public float headHeight = 1.0f;
     public LayerMask terrainLayer;
 
+    [Header("rotation")]
+    public float maxY;
+    public float hardCap = 10.0f;
+
     [Header("main cam")]
     public Camera mainCamera;
 
@@ -143,12 +147,24 @@ public class Player : MonoBehaviour
         if (xAxisClamp > 90)
         {
             xAxisClamp = targetRotBody.x = 90;
-
         }
         else if (xAxisClamp < -90)
         {
             xAxisClamp = -90f;
             targetRotBody.x = 270f;
+        }
+
+        if (yAxisClamp > 90 - maxY)
+        {
+            Debug.Log("clamp >");
+            yAxisClamp = Mathf.Lerp(yAxisClamp, 90 - maxY, Time.deltaTime * 0.5f);
+            targetRotBody.y = -yAxisClamp;
+        }
+        else if (yAxisClamp < -90 + maxY)
+        {
+            Debug.Log("clamp <");
+            yAxisClamp = Mathf.Lerp(yAxisClamp, -90 + maxY, Time.deltaTime * 0.5f);
+            targetRotBody.y = -yAxisClamp;
         }
 
         //transform.localRotation = Quaternion.Euler(targetRotBody);

@@ -11,7 +11,7 @@ public class Bird : MonoBehaviour, IPoolable<Bird>
     public int layerAfterPainted;
 
     public ParticleSystem collisionParticles;
-    public AudioClip collisionClip;
+    public Sound collisionSound;
     
     public float collisionNormalForce = 500.0f;
     
@@ -64,6 +64,8 @@ public class Bird : MonoBehaviour, IPoolable<Bird>
 
             body.AddForce(painting.GetPlane().normal * collisionNormalForce);
             Particles.SpawnFeathers(painting.transform, transform.position);
+
+            AudioRunner.Play3D(collisionSound, transform.position);
 
             StartCoroutine(SetLayer());
             hits++;
