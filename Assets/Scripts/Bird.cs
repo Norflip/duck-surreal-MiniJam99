@@ -18,6 +18,7 @@ public class Bird : MonoBehaviour, IPoolable<Bird>
     public int hits = 0;
 
     float gottenTime;
+    bool isDespawning = false;
 
     Rigidbody body;
     Renderer rend;
@@ -31,10 +32,27 @@ public class Bird : MonoBehaviour, IPoolable<Bird>
     }
 
     private void Update() {
-        if(gottenTime + 2.0f < Time.time || (rend != null && !rend.isVisible))
+        if(!isDespawning && (gottenTime + 2.0f < Time.time || (rend != null && !rend.isVisible)))
         {
-            pool.Return(this);
+            StartCoroutine(Despawn());
         }    
+    }
+
+    IEnumerator Despawn ()
+    {
+        Vector3 startPos = transform.position;
+        Vector3 endPos = transform.position + Vector3.down * 2.0f;
+
+        isDespawning = true;
+        float t = 0.0f;
+        while(t < 1.0f)
+        {
+            t += Time.deltaTime;
+            transform.position = Vector3.Lerp(startPos, endPos, t);
+            yield return null;
+        }
+
+        pool.Return(this);
     }
 
     private void OnCollisionEnter(Collision other) {
@@ -45,6 +63,7 @@ public class Bird : MonoBehaviour, IPoolable<Bird>
             painting.Shake();
 
             body.AddForce(painting.GetPlane().normal * collisionNormalForce);
+            Particles.SpawnFeathers(painting.transform, transform.position);
 
             StartCoroutine(SetLayer());
             hits++;
@@ -59,6 +78,7 @@ public class Bird : MonoBehaviour, IPoolable<Bird>
         hits = 0;
         gottenTime = Time.time;
         body.velocity = body.angularVelocity = Vector3.zero;
+        isDespawning = false;
     }
 
     public void Returned() 
