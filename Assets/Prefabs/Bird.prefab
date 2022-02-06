@@ -109,11 +109,12 @@ MonoBehaviour:
   layerAfterPainted: 0
   collisionParticles: {fileID: 0}
   collisionSound:
-    clip: {fileID: 8300000, guid: 91909f5db828b5e4788b5fcb62ae3469, type: 3}
+    clip: {fileID: 8300000, guid: fd5fb178e0fb9354b927bf4a6fc4172f, type: 3}
     randomizePitch: 0
     minPitch: 0
     maxPitch: 0
     pitch: 1
+    volume: 0.5
   collisionNormalForce: 0
   hits: 0
   launched: 0
